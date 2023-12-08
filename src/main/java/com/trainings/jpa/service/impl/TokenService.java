@@ -1,4 +1,4 @@
-package com.trainings.jpa.token;
+package com.trainings.jpa.service.impl;
 
 import java.sql.Date;
 
