@@ -2,39 +2,28 @@ package com.trainings.jpa.service.impl;
 
 import java.sql.Date;
 
+import com.trainings.jpa.service.ITokenService;
+import io.jsonwebtoken.*;
 import org.springframework.stereotype.Service;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jws;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
-
 @Service
-public class TokenService {
+public class TokenService implements ITokenService {
 	
-	public static final String secretkey = "jBdZVEtze4eogkVex1VqUw3l/qVhi8ERc2n6MRGHoJyZHRdnq4c/m8YXA0nfJmc+fdsmYvo/m7hA\r\n"
-			+ "CKYGwwMQCQ=="; 
+	public static final String SECRET_KEY = "MySecretTokenForHRMSApplicationBackendForAuthenticationCreatedForLocalTestingPurposeOnly";
 
+    @Override
     public String generateToken(String username) {
-        long expirationTimeMillis = System.currentTimeMillis() + 604800000 ; 
+        long expirationTimeMillis = System.currentTimeMillis() + 600000;
         Date expirationDate = new Date(expirationTimeMillis);
-
         return Jwts.builder()
                 .setSubject(username)
                 .setExpiration(expirationDate)
-                .signWith(SignatureAlgorithm.HS512, secretkey)
+                .signWith(SignatureAlgorithm.HS512, SECRET_KEY)
                 .compact();
     }
-    
-    public boolean validateToken(String token) {
-        try {
-            Jws<Claims> claims = Jwts.parser().setSigningKey(secretkey).parseClaimsJws(token);
 
-            return true;
-        } catch (Exception e) {
-            
-            return false;
-        }
+    @Override
+    public void validateToken(String token) throws ExpiredJwtException {
+        Jwts.parser().setSigningKey(SECRET_KEY).parseClaimsJws(token);
     }
-
 }
